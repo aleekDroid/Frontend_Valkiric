@@ -72,8 +72,37 @@ import { RouterLink } from '@angular/router';
           </form>
         </div>
 
-        <!-- Orders -->
+        <!-- Two-Factor Auth -->
         <div class="card full-width">
+          <h3 class="section-title">Verificación en 2 Pasos (2FA)</h3>
+          <div class="twofa-row">
+            <div>
+              <p style="margin:0 0 4px;font-weight:500;">
+                Estado: 
+                @if (auth.currentUser?.twoFactorEnabled) {
+                  <span style="color:var(--color-success, #2ecc71)">Activada ✓</span>
+                } @else {
+                  <span style="color:var(--color-text-muted)">Desactivada</span>
+                }
+              </p>
+              <p style="margin:0;font-size:0.8rem;color:var(--color-text-muted)">
+                Al iniciar sesión se enviará un código de verificación a tu correo.
+              </p>
+            </div>
+            @if (auth.currentUser?.twoFactorEnabled) {
+              <button class="btn btn-outline btn-sm" [disabled]="twofaLoading()" (click)="toggleTwoFactor(false)">
+                @if (twofaLoading()) { <span class="spinner"></span> } Desactivar
+              </button>
+            } @else {
+              <button class="btn btn-primary btn-sm" [disabled]="twofaLoading()" (click)="toggleTwoFactor(true)">
+                @if (twofaLoading()) { <span class="spinner"></span> } Activar
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Orders -->
+        <div id="orders" class="card full-width">
           <h3 class="section-title">Mis Pedidos</h3>
           @if (ordersLoading()) {
             <p style="color:var(--color-text-muted)">Cargando pedidos...</p>
@@ -131,6 +160,14 @@ import { RouterLink } from '@angular/router';
       border-bottom: 1px solid var(--color-border);
     }
 
+    .twofa-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
     @media (max-width: 640px) {
       .profile-layout { grid-template-columns: 1fr; }
     }
@@ -147,6 +184,7 @@ export class ProfileComponent implements OnInit {
   ordersLoading = signal(true);
   profileLoading = signal(false);
   pwdLoading = signal(false);
+  twofaLoading = signal(false);
 
   profileForm = this.fb.group({
     name: [this.auth.currentUser?.name || '', Validators.required],
@@ -174,9 +212,16 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.auth.isLoggedIn() || !this.auth.currentUser) {
+      this.ordersLoading.set(false);
+      return;
+    }
     this.orderService.myOrders().subscribe({
       next: (o) => { this.orders.set(o); this.ordersLoading.set(false); },
-      error: () => this.ordersLoading.set(false)
+      error: () => {
+        this.ordersLoading.set(false);
+        // Nota: si entra aquí con 401, el interceptor hace logout, por eso se ve el redirect
+      }
     });
   }
 
@@ -211,4 +256,20 @@ export class ProfileComponent implements OnInit {
       }
     });
   }
+
+  toggleTwoFactor(enable: boolean): void {
+    this.twofaLoading.set(true);
+    const action = enable ? this.auth.enableTwoFactor() : this.auth.disableTwoFactor();
+    action.subscribe({
+      next: () => {
+        this.twofaLoading.set(false);
+        this.notif.success(enable ? '2FA activado' : '2FA desactivado');
+      },
+      error: () => {
+        this.twofaLoading.set(false);
+        this.notif.error('Error al cambiar configuración de 2FA');
+      }
+    });
+  }
 }
+

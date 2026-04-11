@@ -6,6 +6,7 @@ export interface User {
   role: 'ADMIN' | 'USER';
   isActive: boolean;
   phone?: string;
+  twoFactorEnabled?: boolean;
   createdAt?: string;
 }
 
@@ -53,6 +54,11 @@ export interface Order {
 export interface AuthResponse {
   access_token: string;
   user: User;
+}
+
+export interface TwoFactorRequiredResponse {
+  twoFactorRequired: true;
+  userId: string;
 }
 
 export interface LoginDto {

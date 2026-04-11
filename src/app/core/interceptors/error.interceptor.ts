@@ -13,9 +13,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError(err => {
       const status = err.status;
-      if (status === 401) {
-        authService.logout();
-        router.navigate(['/login']);
+      if (status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
+        notif.error('Sesión expirada. Inicia sesión nuevamente.');
+        authService.forceLogout();
       } else if (status === 403) {
         notif.error('No tienes permiso para realizar esta acción');
         router.navigate(['/']);

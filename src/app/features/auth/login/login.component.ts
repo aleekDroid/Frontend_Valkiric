@@ -19,43 +19,77 @@ import { NotificationService } from '../../../core/services/notification.service
           </svg>
           <h1>VALKIRIC</h1>
         </div>
-        <h2>Iniciar Sesión</h2>
-        <form [formGroup]="form" (ngSubmit)="submit()">
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input formControlName="email" type="email" class="form-control" placeholder="tu@email.com"
-              [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched" />
-            @if (form.get('email')?.invalid && form.get('email')?.touched) {
-              <span class="form-error">Email inválido</span>
-            }
-          </div>
-          <div class="form-group">
-            <label class="form-label">Contraseña</label>
-            <input formControlName="password" [type]="showPwd() ? 'text' : 'password'" class="form-control" placeholder="••••••••"
-              [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched" />
-            @if (form.get('password')?.invalid && form.get('password')?.touched) {
-              <span class="form-error">Contraseña requerida</span>
-            }
-          </div>
 
-          @if (error()) {
-            <div class="auth-error">{{ error() }}</div>
-          }
+        @if (step() === 'login') {
+          <h2>Iniciar Sesión</h2>
+          <form [formGroup]="form" (ngSubmit)="submit()">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input formControlName="email" type="email" class="form-control" placeholder="tu@email.com"
+                [class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched" />
+              @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                <span class="form-error">Email inválido</span>
+              }
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contraseña</label>
+              <input formControlName="password" [type]="showPwd() ? 'text' : 'password'" class="form-control" placeholder="••••••••"
+                [class.is-invalid]="form.get('password')?.invalid && form.get('password')?.touched" />
+              @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                <span class="form-error">Contraseña requerida</span>
+              }
+            </div>
 
-          <button type="submit" class="btn btn-primary btn-lg auth-btn" [disabled]="form.invalid || loading()">
-            @if (loading()) {
-              <span class="spinner"></span> Ingresando...
-            } @else {
-              Iniciar Sesión
+            @if (error()) {
+              <div class="auth-error">{{ error() }}</div>
             }
-          </button>
-        </form>
-        <p class="auth-footer">
-          ¿No tienes cuenta? <a routerLink="/register">Regístrate</a>
-        </p>
-        <p class="demo-hint">
-          Demo: <code>admin&#64;valkiric.com</code> / <code>Admin1234!</code>
-        </p>
+
+            <button type="submit" class="btn btn-primary btn-lg auth-btn" [disabled]="form.invalid || loading()">
+              @if (loading()) {
+                <span class="spinner"></span> Ingresando...
+              } @else {
+                Iniciar Sesión
+              }
+            </button>
+          </form>
+          <p class="auth-footer">
+            ¿No tienes cuenta? <a routerLink="/register">Regístrate</a>
+          </p>
+          <p class="demo-hint">
+            Demo: <code>admin&#64;valkiric.com</code> / <code>Admin1234!</code>
+          </p>
+        }
+
+        @if (step() === 'otp') {
+          <h2>Verificación en 2 Pasos</h2>
+          <p class="otp-hint">Enviamos un código de 6 dígitos a tu correo. Ingrésalo a continuación. Expira en 10 minutos.</p>
+          <form [formGroup]="otpForm" (ngSubmit)="submitOtp()">
+            <div class="form-group">
+              <label class="form-label">Código de verificación</label>
+              <input formControlName="code" type="text" inputmode="numeric" maxlength="6"
+                class="form-control otp-input" placeholder="000000"
+                [class.is-invalid]="otpForm.get('code')?.invalid && otpForm.get('code')?.touched" />
+              @if (otpForm.get('code')?.invalid && otpForm.get('code')?.touched) {
+                <span class="form-error">El código debe tener 6 dígitos</span>
+              }
+            </div>
+
+            @if (error()) {
+              <div class="auth-error">{{ error() }}</div>
+            }
+
+            <button type="submit" class="btn btn-primary btn-lg auth-btn" [disabled]="otpForm.invalid || loading()">
+              @if (loading()) {
+                <span class="spinner"></span> Verificando...
+              } @else {
+                Verificar Código
+              }
+            </button>
+          </form>
+          <p class="auth-footer">
+            <a href="#" (click)="backToLogin($event)">← Volver al inicio de sesión</a>
+          </p>
+        }
       </div>
     </div>
   `,
@@ -138,6 +172,21 @@ import { NotificationService } from '../../../core/services/notification.service
         font-size: 0.75rem;
       }
     }
+
+    .otp-hint {
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+    }
+
+    .otp-input {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      font-family: monospace;
+    }
   `]
 })
 export class LoginComponent {
@@ -147,6 +196,8 @@ export class LoginComponent {
   private route = inject(ActivatedRoute);
   private notif = inject(NotificationService);
 
+  step = signal<'login' | 'otp'>('login');
+  pendingUserId = signal('');
   loading = signal(false);
   error = signal('');
   showPwd = signal(false);
@@ -154,6 +205,10 @@ export class LoginComponent {
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required]
+  });
+
+  otpForm = this.fb.group({
+    code: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]]
   });
 
   submit(): void {
@@ -164,14 +219,47 @@ export class LoginComponent {
     this.auth.login(this.form.value as any).subscribe({
       next: (res) => {
         this.loading.set(false);
-        this.notif.success(`¡Bienvenido, ${res.user.name}!`);
-        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
-        this.router.navigateByUrl(returnUrl);
+        if ('twoFactorRequired' in res && res.twoFactorRequired) {
+          this.pendingUserId.set(res.userId);
+          this.step.set('otp');
+        } else if ('user' in res) {
+          this.notif.success(`¡Bienvenido, ${res.user.name}!`);
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+          this.router.navigateByUrl(returnUrl);
+        }
       },
       error: (err) => {
         this.loading.set(false);
         this.error.set(err.error?.message || 'Credenciales incorrectas');
       }
     });
+  }
+
+  submitOtp(): void {
+    if (this.otpForm.invalid) return;
+    this.loading.set(true);
+    this.error.set('');
+
+    const code = this.otpForm.value.code!;
+    this.auth.verifyTwoFactor(this.pendingUserId(), code).subscribe({
+      next: (res) => {
+        this.loading.set(false);
+        this.notif.success(`¡Bienvenido, ${res.user.name}!`);
+        const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.router.navigateByUrl(returnUrl);
+      },
+      error: (err) => {
+        this.loading.set(false);
+        this.error.set(err.error?.message || 'Código incorrecto o expirado');
+      }
+    });
+  }
+
+  backToLogin(e: Event): void {
+    e.preventDefault();
+    this.step.set('login');
+    this.pendingUserId.set('');
+    this.otpForm.reset();
+    this.error.set('');
   }
 }

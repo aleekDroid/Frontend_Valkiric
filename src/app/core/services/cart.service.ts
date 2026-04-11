@@ -1,10 +1,11 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { CartItem, Product } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
-  private readonly CART_KEY = 'valkiric_cart';
+  private readonly CART_BASE_KEY = 'valkiric_cart';
+  private _currentKey = `${this.CART_BASE_KEY}_guest`;
   private _items$ = new BehaviorSubject<CartItem[]>(this.loadCart());
 
   items$ = this._items$.asObservable();
@@ -51,14 +52,23 @@ export class CartService {
     this.save([]);
   }
 
+  setUser(userId: string | null): void {
+    const newKey = userId
+      ? `${this.CART_BASE_KEY}_${userId}`
+      : `${this.CART_BASE_KEY}_guest`;
+    if (newKey === this._currentKey) return;
+    this._currentKey = newKey;
+    this._items$.next(this.loadCart());
+  }
+
   private save(items: CartItem[]): void {
-    localStorage.setItem(this.CART_KEY, JSON.stringify(items));
+    localStorage.setItem(this._currentKey, JSON.stringify(items));
     this._items$.next(items);
   }
 
   private loadCart(): CartItem[] {
     try {
-      const raw = localStorage.getItem(this.CART_KEY);
+      const raw = localStorage.getItem(this._currentKey);
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];
