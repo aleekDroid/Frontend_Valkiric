@@ -6,6 +6,6 @@
     }
   ],
   "buildCommand": "npm run build:prod",
-  "outputDirectory": "dist/valkiric",
+  "outputDirectory": "dist/valkiric/browser",
   "framework": "angular"
 }
