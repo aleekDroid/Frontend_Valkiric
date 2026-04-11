@@ -37,7 +37,7 @@ import { RouterLink } from '@angular/router';
             <h4>Cuenta</h4>
             <a routerLink="/login">Iniciar Sesión</a>
             <a routerLink="/register">Registro</a>
-            <a routerLink="/profile">Mi Perfil</a>
+            <a routerLink="/profile">Perfil</a>
             <a routerLink="/cart">Carrito</a>
           </div>
         </div>
@@ -47,7 +47,6 @@ import { RouterLink } from '@angular/router';
         <div class="container">
           <span>© {{ year }} Valkiric. Todos los derechos reservados.</span>
           <span class="footer-divider">·</span>
-          <span>Proyecto de demostración</span>
         </div>
       </div>
     </footer>
