@@ -55,9 +55,6 @@ import { NotificationService } from '../../../core/services/notification.service
           <p class="auth-footer">
             ¿No tienes cuenta? <a routerLink="/register">Regístrate</a>
           </p>
-          <p class="demo-hint">
-            Demo: <code>admin&#64;valkiric.com</code> / <code>Admin1234!</code>
-          </p>
         }
 
         @if (step() === 'otp') {
