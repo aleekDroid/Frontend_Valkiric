@@ -1,5 +1,6 @@
 <!-- HERO -->
 <section class="hero">
+<section class="hero" [class.hero-night]="isNightTime()">
   <div class="hero-bg">
     <div class="hero-grid"></div>
     <div class="hero-glow"></div>
@@ -13,7 +14,13 @@
     </div>
     <h1 class="hero-title">
       <span class="hero-brand">VALKIRIC</span>
-      <span class="hero-sub">Forjado para los que no se rinden</span>
+      <span class="hero-sub">
+        @if (isNightTime()) {
+          Entrenamiento Nocturno Activado
+        } @else {
+          Forjado para los que no se rinden
+        }
+      </span>
     </h1>
     <p class="hero-desc">
       Suplementos, ropa y equipo de alto rendimiento para atletas que van en serio.
@@ -50,7 +57,6 @@
     <div class="categories-grid">
       @for (cat of categories; track cat.id) {
         <a [routerLink]="['/catalog']" [queryParams]="{category: cat.id}" class="category-card">
-          <span class="cat-icon">{{ cat.icon }}</span>
           <h3>{{ cat.label }}</h3>
           <p>{{ cat.desc }}</p>
           <span class="cat-arrow">→</span>
@@ -94,7 +100,6 @@
     <div class="resources-grid">
       @for (res of resources; track res.name) {
         <a [href]="res.url" target="_blank" rel="noopener" class="resource-card">
-          <div class="resource-icon" [style.color]="res.color">{{ res.icon }}</div>
           <div class="resource-body">
             <h3>{{ res.name }}</h3>
             <p>{{ res.desc }}</p>

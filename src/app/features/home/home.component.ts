@@ -20,39 +20,40 @@ export class HomeComponent implements OnInit {
   featuredProducts = signal<Product[]>([]);
   searchQuery = signal('');
   loading = signal(true);
+  isNightTime = signal(false);
 
   readonly categories = [
-    { id: 'supplements', label: 'Suplementos', icon: '🧪', desc: 'Proteínas, creatina, pre-entreno y más' },
-    { id: 'clothing', label: 'Ropa', icon: '👕', desc: 'Playeras, shorts, leggings de alto rendimiento' },
-    { id: 'accessories', label: 'Accesorios', icon: '🏋️', desc: 'Cinturones, guantes, bandas y equipo' },
-    { id: 'merch', label: 'Merch', icon: '⚡', desc: 'Colección exclusiva Valkiric' }
+    { id: 'supplements', label: 'Suplementos', desc: 'Proteinas, creatina, pre-entreno y mas' },
+    { id: 'clothing', label: 'Ropa', desc: 'Playeras, shorts, leggings de alto rendimiento' },
+    { id: 'accessories', label: 'Accesorios', desc: 'Cinturones, guantes, bandas y equipo' },
+    { id: 'merch', label: 'Merch', desc: 'Coleccion exclusiva Valkiric' }
   ];
 
   readonly resources = [
     {
       name: 'MuscleWiki',
       url: 'https://musclewiki.com',
-      desc: 'Encuentra ejercicios por grupo muscular con guías visuales interactivas',
-      icon: '💪',
+      desc: 'Encuentra ejercicios por grupo muscular con guias visuales interactivas',
       color: '#3498db'
     },
     {
       name: 'Healthline Nutrition',
       url: 'https://www.healthline.com/nutrition',
-      desc: 'Guías nutricionales respaldadas por ciencia para optimizar tu dieta',
-      icon: '🥗',
+      desc: 'Guias nutricionales respaldadas por ciencia para optimizar tu dieta',
       color: '#27AE60'
     },
     {
       name: 'ExRx.net',
       url: 'https://exrx.net',
-      desc: 'Base de datos completa de ejercicios con biomecánica y técnica correcta',
-      icon: '📋',
+      desc: 'Base de datos completa de ejercicios con biomecanica y tecnica correcta',
       color: '#F39C12'
     }
   ];
 
   ngOnInit(): void {
+    const currentHour = new Date().getHours();
+    this.isNightTime.set(currentHour >= 20 || currentHour < 5);
+
     this.productService.getAll().subscribe({
       next: (products) => {
         this.featuredProducts.set(products.filter(p => p.isActive).slice(0, 8));

@@ -292,3 +292,43 @@
   .search-bar { display: none; }
   .user-name { display: none; }
 }
+
+/* Dropdown Menu Catalog */
+.nav-item-dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  min-width: 160px;
+  padding: 8px 0;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: slideDown 0.15s ease;
+}
+
+.dropdown-item {
+  padding: 10px 16px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all var(--transition);
+  
+  &:hover {
+    background: var(--color-surface-2);
+    color: var(--color-text);
+  }
+}

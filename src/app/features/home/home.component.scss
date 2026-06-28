@@ -286,3 +286,17 @@
   flex-shrink: 0;
   opacity: 0.5;
 }
+
+/* Night Mode Event */
+.hero-night {
+  .hero-bg {
+    background-color: #050505;
+  }
+  .hero-glow {
+    background: radial-gradient(ellipse, rgba(231,76,60,.2) 0%, transparent 60%);
+  }
+  .hero-sub {
+    color: var(--color-accent);
+    text-shadow: 0 0 10px rgba(231,76,60,0.4);
+  }
+}

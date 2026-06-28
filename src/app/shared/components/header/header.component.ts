@@ -13,17 +13,14 @@ import { CartService } from '../../../core/services/cart.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-auth: AuthService = inject(AuthService);
-cart: CartService = inject(CartService);
-router: Router = inject(Router);
+  auth: AuthService = inject(AuthService);
+  cart: CartService = inject(CartService);
+  router: Router = inject(Router);
 
   searchQuery = signal('');
   menuOpen = signal(false);
   userMenuOpen = signal(false);
-
-  readonly externalLinks = [
-    { label: 'MuscleWiki', url: 'https://musclewiki.com', icon: '💪' },
-  ];
+  catalogOpen = signal(false); 
 
   search(): void {
     const q = this.searchQuery().trim();
@@ -44,6 +41,11 @@ router: Router = inject(Router);
 
   toggleMenu(): void { this.menuOpen.update(v => !v); }
   toggleUserMenu(): void { this.userMenuOpen.update(v => !v); }
+
+  closeMenus(): void {
+    this.menuOpen.set(false);
+    this.catalogOpen.set(false);
+  }
 
   @HostListener('document:click', ['$event'])
   onDocClick(e: MouseEvent): void {

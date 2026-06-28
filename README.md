@@ -55,6 +55,4 @@ El archivo `vercel.json` ya está preparado para SPA routing.
 
 ## Seguridad
 
-- No subas `.env` ni archivos locales de entorno
-- No guardes secretos del backend en este repositorio
 - `environment.prod.ts` solo debe contener URLs públicas, no credenciales
