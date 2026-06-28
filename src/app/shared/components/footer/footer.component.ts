@@ -19,13 +19,6 @@ import { RouterLink } from '@angular/router';
           </a>
           <p class="footer-tagline">Forjado para los que no se rinden.</p>
 
-          <form class="contact-form" (submit)="onSubmitContact($event)">
-            <h4>Contacto</h4>
-            <input type="text" placeholder="Nombre" required>
-            <input type="email" placeholder="Correo electrónico" required>
-            <textarea placeholder="Mensaje" rows="2" required></textarea>
-            <button type="submit">Enviar Mensaje</button>
-          </form>
         </div>
 
         <div class="footer-col links-col">
@@ -43,17 +36,6 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/contact">Página de Contacto</a>
           </div>
         </div>
-
-        <div class="footer-col map-col">
-          <h4>Nuestra Ubicación</h4>
-          <p class="address-text">Av. Principal 123, Zona Centro, Querétaro, Qro.</p>
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.41730219198!2d-100.47952458428629!3d20.61214040925232!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85d35b8fdc5b6ac3%3A0x9cd1092ed5634163!2sSantiago%20de%20Quer%C3%A9taro%2C%20Qro.!5e0!3m2!1ses!2smx!4v1700000000000!5m2!1ses!2smx" 
-            width="100%" height="200" style="border:0; border-radius: 8px;" 
-            allowfullscreen="" loading="lazy">
-          </iframe>
-        </div>
-
       </div>
 
       <div class="footer-bottom">
