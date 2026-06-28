@@ -40,6 +40,7 @@ import { RouterLink } from '@angular/router';
             <a routerLink="/login">Iniciar Sesión</a>
             <a routerLink="/profile">Perfil</a>
             <a routerLink="/terms">Términos y Condiciones</a>
+            <a routerLink="/contact">Página de Contacto</a>
           </div>
         </div>
 

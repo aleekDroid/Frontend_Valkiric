@@ -38,6 +38,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
   },
   {
+    path: 'terms',
+    loadComponent: () => import('./features/terms/terms.component').then(m => m.TermsComponent)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent)
+  },
+  {
     path: 'admin',
     canActivate: [adminGuard],
     children: [
